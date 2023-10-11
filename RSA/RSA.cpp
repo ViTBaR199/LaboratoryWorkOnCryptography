@@ -1,5 +1,7 @@
 ﻿#include <iostream>
 #include "CalculatingValues.h"
+#include "IProbabilisticSimplicityTest.h"
+#include <vector>
 
 int main()
 {
@@ -23,6 +25,17 @@ int main()
     если а делится на n без остатка, то значение Якоби = 0
     При этом, если n - простое число, то символ Якоби совподает с символом Лагранжа
     */
-    std::cout << "Символ Якоби для чисел " << a << " и " << n << " равен " << test.jacobi(a, n) << std::endl;
+    std::cout << "Символ Якоби для чисел " << a << " и " << n << " равен " << test.jacobi(a, n) << std::endl << std::endl;
+
+
+    FermatTest fermaTest;
+    std::vector<int> testCase = { 5, 6, 7, 8, 9, 10, 11 };
+
+    for (int test : testCase) {
+        std::cout << "Тест " << test << "...\n";
+        bool isPrime = fermaTest.runTest(test, 0.5);
+        std::cout << "Результат: " << (isPrime ? "prime" : "composite") << "\n\n";
+    }
+
     return 0;
 }
