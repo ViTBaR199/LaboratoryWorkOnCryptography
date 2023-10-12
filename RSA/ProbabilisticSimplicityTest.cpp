@@ -48,15 +48,40 @@ bool FermatTest :: iteration(int value) {
 	return true;					 //число простое
 }
 
-//// Класс для теста Соловея-Штрассена
-//class SolovayStrassenTest : public AbstractPrimalityTest {
-//protected:
-//	bool iteration(int value) override {
-//
-//
-//	}
-//};
-//
+// Класс для теста Соловея-Штрассена
+bool SolovayStrassenTest :: iteration(int value) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dist(2, value - 2);
+	int a = dist(gen);
+
+	// Вычисляем Якоби (a / value)
+	int jacobi = CalculatingValues::jacobi(a, value);
+	if (jacobi == -1) {
+		jacobi = value - 1; // Приводим Якоби к положительному значению
+	}
+
+	// Вычисляем a ^ ((value - 1) / 2) mod value
+	int exponent = (value - 1) / 2;
+	int result = 1;
+	int base = a % value;
+	while (exponent > 0) {
+		if (exponent & 1) {
+			result = (result * base) % value;
+		}
+		base = (base * base) % value;
+		exponent >>= 1;
+	}
+
+	// Если Якоби не равен результату, то число составное
+	if (jacobi != result) {
+		return false;
+	}
+
+	// В противном случае, предполагаем, что число простое
+	return true;
+}
+
 //// Класс для теста Миллера-Рабина
 //class MillerRabinTest : public AbstractPrimalityTest {
 //protected:

@@ -1,4 +1,5 @@
 #pragma once
+#include "CalculatingValues.h"
 
 class IProbabilisticSimplicityTest{
 public:
@@ -21,12 +22,12 @@ protected:
 	bool iteration(int value) override;
 };
 
-//// Класс для теста Соловея-Штрассена
-//class SolovayStrassenTest : AbstractPrimalityTest {
-//protected:
-//	bool iteration(int value) override;
-//};
-//
+// Класс для теста Соловея-Штрассена
+class SolovayStrassenTest : public AbstractPrimalityTest {
+protected:
+	bool iteration(int value) override;
+};
+
 //// Класс для теста Миллера-Рабина
 //class MillerRabinTest : public AbstractPrimalityTest {
 //protected:

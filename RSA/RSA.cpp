@@ -29,13 +29,20 @@ int main()
 
 
     FermatTest fermaTest;
-    std::vector<int> testCase = { 5, 6, 7, 8, 9, 10, 11 };
+    std::vector<int> testCase = { 5, 6, 7, 8, 9, 10, 11, 561 };
 
-    for (int test : testCase) {
+    /*for (int test : testCase) {
         std::cout << "Тест " << test << "...\n";
         bool isPrime = fermaTest.runTest(test, 0.5);
         std::cout << "Результат: " << (isPrime ? "prime" : "composite") << "\n\n";
-    }
+    }*/
 
+    SolovayStrassenTest solovayStrassenTest;
+
+    for (int test : testCase) {
+        std::cout << "Testing " << test << "...\n";
+        bool isPrime = solovayStrassenTest.runTest(test, 0.5);
+        std::cout << "Result: " << (isPrime ? "prime" : "composite") << "\n\n";
+    }
     return 0;
 }
