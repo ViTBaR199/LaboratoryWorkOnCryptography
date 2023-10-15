@@ -18,18 +18,18 @@ public:
 
 // Класс для теста Ферма
 class FermatTest : public AbstractPrimalityTest {
-protected:
+public:
 	bool iteration(int value) override;
 };
 
 // Класс для теста Соловея-Штрассена
 class SolovayStrassenTest : public AbstractPrimalityTest {
-protected:
+public:
 	bool iteration(int value) override;
 };
 
-//// Класс для теста Миллера-Рабина
-//class MillerRabinTest : public AbstractPrimalityTest {
-//protected:
-//	bool iteration(int value) override;
-//};
+// Класс для теста Миллера-Рабина
+class MillerRabinTest : public AbstractPrimalityTest {
+public:
+	bool iteration(int value) override;
+};

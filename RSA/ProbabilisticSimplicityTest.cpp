@@ -82,11 +82,45 @@ bool SolovayStrassenTest :: iteration(int value) {
 	return true;
 }
 
-//// Класс для теста Миллера-Рабина
-//class MillerRabinTest : public AbstractPrimalityTest {
-//protected:
-//	bool iteration(int value) override {
-//
-//
-//	}
-//};
+// Класс для теста Миллера-Рабина
+bool MillerRabinTest::iteration(int value) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(2, value - 2);
+	int a = dis(gen);
+
+	int r = 0;
+	int d = value - 1;
+	while (d % 2 == 0) {
+		d /= 2;
+		r++;
+	}
+
+	int x = 1;
+	int base = a % value;
+	while (d > 0) {
+		if (d & 1) {
+			x = (x * base) % value;
+		}
+		base = (base * base) % value;
+		d >>= 1;
+	}
+
+	if (x == 1 || x == value - 1) {
+		return true;		//число простое
+	}
+
+	for (int i = 0; i < r - 1; i++) {
+		x = (x * x) % value;
+
+		if (x == 1) {
+			return false;		//число составное
+		}
+
+		if (x == value - 1) {
+			return true;		//число простое
+		}
+	}
+
+	return false;		//число составное
+}
