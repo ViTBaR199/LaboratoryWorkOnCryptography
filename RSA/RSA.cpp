@@ -75,33 +75,66 @@ unsigned int multiplicativeInverse(unsigned int e, unsigned int phi) {
     return lastx;
 }
 
-class KeyGeneration {
+unsigned long long ModPow(unsigned long long base, unsigned int exp, unsigned long long mod) {
+    base %= mod;
+    unsigned long long result = 1;
+    while (exp > 0) {
+        if (exp & 1) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exp >>= 1;
+    }
+    return result;
+}
+
+class RSA {
 private:
     unsigned int _bitLength;
     char _test_selection;
+    unsigned long long _value_n;
+    unsigned int _pubKey;
+    unsigned int _privKey;
 
 public:
-    KeyGeneration(unsigned int bitLength, char test_selection) {
+    RSA(unsigned int bitLength, char test_selection) {
         this->_bitLength = bitLength;
         this->_test_selection = test_selection;
+        this->_value_n = 0;
+        this->_pubKey = 0;
+        this->_privKey = 0;
     }
 
-    void generate() {
+    std::pair<unsigned int, unsigned int> generate() {
         unsigned int p = GeneratePrimeNumber(_bitLength, _test_selection);
         unsigned int q = GeneratePrimeNumber(_bitLength, _test_selection);
-        unsigned int e = 65537;      //экспонента для защиты от атаки Винера
-        unsigned int n = p * q;
+        this->_pubKey = 65537;      //экспонента для защиты от атаки Винера
+        this->_value_n = p * q;
+
         unsigned int phi = (p - 1) * (q - 1);
 
-        if (e < 1 || e > phi) throw std::runtime_error("Ошибка!\tВозможно, вы ввели слишком маленькую длину бита");
+        if (_pubKey < 1 || _pubKey > phi) {
+            throw std::runtime_error("Ошибка!\tВозможно, вы ввели слишком маленькую длину бита");
+        }
 
-        unsigned int d = multiplicativeInverse(e, phi);
+        this->_privKey = multiplicativeInverse(_pubKey, phi);
 
-        if (p == 0 || q == 0) throw std::runtime_error("Ошибка!\tВозможно, вы ввели неверное значение");
+        if (p == 0 || q == 0) {
+            throw std::runtime_error("Ошибка!\tВозможно, вы ввели неверное значение");
+        }
 
-        std::cout << "Созданные ключи: " << p << ", " << q << "\n";
-        std::cout << "Открытый ключ: (" << e << ", " << n << ")\n";
-        std::cout << "Закрытый ключ: (" << d << ", " << n << ")\n";
+        return std::make_pair(_pubKey, _privKey);
+        /*std::cout << "Созданные ключи: " << p << ", " << q << "\n";
+        std::cout << "Открытый ключ: (" << e << ", " << _value_n << ")\n";
+        std::cout << "Закрытый ключ: (" << d << ", " << _value_n << ")\n";*/
+    }
+
+    unsigned long long Encrypt(unsigned long long message) {
+        return ModPow(message, this->_pubKey, this->_value_n);
+    }
+
+    unsigned long long Decrypt(unsigned long long messege) {
+        return ModPow(messege, this->_privKey, this->_value_n);
     }
 };
 
@@ -163,8 +196,11 @@ int main()
     char value;
     std::cin >> value;
 
-    KeyGeneration kg(16, value);
+    //RSA kg(10, value); //при е = 17
+    RSA kg(16, value);   //при е = 65537
     kg.generate();
+    auto res_enc = kg.Encrypt(123454321);
+    std::cout << kg.Decrypt(res_enc);
 
     return 0;
 }

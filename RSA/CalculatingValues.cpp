@@ -20,6 +20,7 @@ int CalculatingValues::legendre(int a, int p){
 }
 
 int CalculatingValues::jacobi(int a, int p) {
+    p = abs(p);
     int jacobi_value = 1;
 
     while (a != 0) {

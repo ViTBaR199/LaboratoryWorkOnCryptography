@@ -1,3 +1,3 @@
 ﻿  RSA.cpp
-C:\Users\baran\source\repos\RSA\RSA\RSA.cpp(75,12): warning C4244: return: преобразование "__int64" в "unsigned int", возможна потеря данных
-  RSA.vcxproj -> C:\Users\baran\source\repos\RSA\x64\Debug\RSA.exe
+E:\LaboratoryWorkOnCryptography-main\LaboratoryWorkOnCryptography-main\RSA\RSA.cpp(75,12): warning C4244: return: преобразование "__int64" в "unsigned int", возможна потеря данных
+  RSA.vcxproj -> E:\LaboratoryWorkOnCryptography-main\LaboratoryWorkOnCryptography-main\x64\Debug\RSA.exe

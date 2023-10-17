@@ -25,6 +25,7 @@ bool AbstractPrimalityTest :: runTest(int value, double minProbability) {
 // Если value - простое, то оно удовлетворяет сравнению a^(value-1) = 1 (mod value)
 // для любого a, не делящегося на value
 bool FermatTest :: iteration(int value) {
+	value = abs(value);
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dist(2, value - 2);
@@ -50,6 +51,7 @@ bool FermatTest :: iteration(int value) {
 
 // Класс для теста Соловея-Штрассена
 bool SolovayStrassenTest :: iteration(int value) {
+	value = abs(value);
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dist(2, value - 2);
@@ -84,6 +86,7 @@ bool SolovayStrassenTest :: iteration(int value) {
 
 // Класс для теста Миллера-Рабина
 bool MillerRabinTest::iteration(int value) {
+	value = abs(value);
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> dis(2, value - 2);
