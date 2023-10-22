@@ -1,34 +1,49 @@
 ﻿#include <iostream>
 #include "CalculatingValues.h"
 #include "IProbabilisticSimplicityTest.h"
+#include "Atack.h"
 #include <vector>
 #include <random>
 
 
-unsigned int isPrime(unsigned int bitlength) {
+unsigned long long isPrime(uint64_t bitlength) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(1 << (bitlength - 1), (1 << bitlength) - 1);        //для защиты Ферма
+
+    int start = pow(10, bitlength - 1);
+    int end = pow(10, bitlength) - 1;
+    std::uniform_int_distribution<> dis(start, end);
+
+    //std::uniform_int_distribution<unsigned long long> dis(1ULL << (bitlength - 1), (1ULL << bitlength) - 1);
     return dis(gen);
 }
 
 
-unsigned int GeneratePrimeNumber(unsigned int bitlength, char numberTest) {
+unsigned long long GeneratePrimeNumber(uint64_t bitlength, char numberTest) {
 
     FermatTest* obj1 = nullptr;
     SolovayStrassenTest* obj2 = nullptr;
     MillerRabinTest* obj3 = nullptr;
-    unsigned int prime;
+    unsigned long long prime;
 
-    switch (numberTest){
+    switch (numberTest) {
     case '1': {
+        /*obj1 = new FermatTest();
+        prime = isPrime(bitlength);
+
+        if ((prime & 1) == 0) {
+            prime++;
+        }
+        while (!obj1->iteration(prime)){
+            prime += 2;
+        }
+        break;*/
         obj1 = new FermatTest();
-        
-        do{
+
+        do {
             prime = isPrime(bitlength);
-        } 
-        while (!obj1->iteration(prime));
-        return prime;
+        } while (!obj1->iteration(prime));
+        break;
     }
     case '2': {
         obj2 = new SolovayStrassenTest();
@@ -36,7 +51,7 @@ unsigned int GeneratePrimeNumber(unsigned int bitlength, char numberTest) {
         do {
             prime = isPrime(bitlength);
         } while (!obj2->iteration(prime));
-        return prime;
+        break;
     }
     case '3': {
         obj3 = new MillerRabinTest();
@@ -44,15 +59,15 @@ unsigned int GeneratePrimeNumber(unsigned int bitlength, char numberTest) {
         do {
             prime = isPrime(bitlength);
         } while (!obj3->iteration(prime));
-        return prime;
+        break;
     }
     default:
         return 0;
     }
-
     delete obj1;
     delete obj2;
     delete obj3;
+    return prime;
 }
 
 unsigned int multiplicativeInverse(unsigned int e, unsigned int phi) {
@@ -74,27 +89,160 @@ unsigned int multiplicativeInverse(unsigned int e, unsigned int phi) {
     if (lastx < 0) lastx += phi;
     return lastx;
 }
+//unsigned int multiplicativeInverse(unsigned int e, unsigned int phi) {
+//    e = e % phi;
+//    for (int i = 1; i < phi; i++) {
+//        if ((e * i) % phi == 1) {
+//            return i;
+//        }
+//    }
+//    return -1;
+//}
 
-unsigned long long ModPow(unsigned long long base, unsigned int exp, unsigned long long mod) {
-    base %= mod;
-    unsigned long long result = 1;
-    while (exp > 0) {
-        if (exp & 1) {
-            result = (result * base) % mod;
-        }
-        base = (base * base) % mod;
-        exp >>= 1;
+
+//unsigned long long ModPow(unsigned long long base, unsigned long long exp, unsigned long long mod) {
+//    base %= mod;
+//    unsigned long long result = 1;
+//    base = base % mod;
+//    while (exp > 0) {
+//        if (exp & 1) {
+//            result = (result * base) % mod;
+//        }
+//        exp = exp >> 1;
+//        base = (base * base) % mod;
+//    }
+//    return result;
+//}
+
+
+unsigned long long int mul_mod(unsigned long long x, unsigned long long y, unsigned long long m) {
+    if (x > y) {
+        unsigned long long tmp = x;
+        x = y;
+        y = tmp;
     }
-    return result;
+    unsigned long long res = 0;
+    unsigned long long iy = y;
+    while (x) {
+        if (x & 1)
+            res = (res + iy) % m;
+        iy = (iy + iy) % m;
+        x >>= 1;
+    }
+    return  res;
+}
+
+unsigned long long ModPow(unsigned long long x, unsigned long long n, unsigned long long m) {
+    unsigned long long res = 1;
+    while (n) {
+        if (n & 1)
+            res = mul_mod(res, x, m);
+        x = mul_mod(x, x, m);
+        n >>= 1;
+    }
+    return res;
+}
+
+//НОД для создания публичного ключа
+unsigned int NOD(unsigned int bitlength, char numberTest, unsigned int value) {
+    unsigned int a = value;
+    unsigned int b = GeneratePrimeNumber(bitlength, numberTest);
+    unsigned int c = b;
+    if (a < c) {
+        std::swap(a, c);
+    }
+
+    while (c) {
+        a %= c;
+        std::swap(a, c);
+    }
+
+    if (a == 1) {
+        return b;
+    }
+    else {
+        return NOD(bitlength, numberTest, a);
+    }
+}
+//unsigned int NOD(unsigned int value1, unsigned int value2) {
+//    int temp;
+//    while (true) {
+//        temp = value1 % value2;
+//        if (temp == 0) return value2;
+//        value1 = value2;
+//        value2 = temp;
+//    }
+//}
+//unsigned int extendedEuclid(unsigned int a, unsigned int b, unsigned int &x, unsigned int &y) {
+//    if (a == 0) {
+//        x = 0;
+//        y = 1;
+//        return b;
+//    }
+//    unsigned int x1, y1;
+//    int d = extendedEuclid(b % a, a, x1, y1);
+//    x = y1 - (b / a) * x1;
+//    y = x1;
+//    return d;
+//}
+
+//НОД
+long long extended_gcd(long long a, long long b, long long& x, long long& y) {
+    if (a == 0) {
+        x = 0;
+        y = 1;
+        return b;
+    }
+    long long x1, y1;
+    long long d = extended_gcd(b % a, a, x1, y1);
+    x = y1 - (b / a) * x1;
+    y = x1;
+    return d;
+}
+
+//обратное по модулю число
+long long mod_inverse(long long e, long long phi) {
+    long long x, y;
+    long long g = extended_gcd(e, phi, x, y);
+    if (g != 1)
+        throw "modular inverse does not exist";
+    else {
+        x = (x % phi + phi) % phi;
+        return x;
+    }
+}
+
+bool Fermat(long long p, long long q) {
+    if (p == q) {
+        return false;
+    }
+    unsigned long long A = (p + q) / 2;
+    long long B = abs(p - q);
+    unsigned long long N = (A - B) * (A + B);
+
+    if (N < 0) {
+        return true;
+    }
+
+    if (p != sqrt(N) && q != sqrt(N)) {
+        return true;
+    }
+}
+
+bool Wiener(unsigned long long d, unsigned long long n) {
+    if (d < (0.3333 * pow((double)n, 0.25))) {
+        return true;
+    }
+    else false;
 }
 
 class RSA {
-private:
+public:
     unsigned int _bitLength;
     char _test_selection;
     unsigned long long _value_n;
-    unsigned int _pubKey;
-    unsigned int _privKey;
+    unsigned long long _pubKey;
+    unsigned long long _privKey;
 
 public:
     RSA(unsigned int bitLength, char test_selection) {
@@ -104,29 +252,38 @@ public:
         this->_pubKey = 0;
         this->_privKey = 0;
     }
+    void generate() {
+        long long p = GeneratePrimeNumber(_bitLength, _test_selection);
+        long long q = GeneratePrimeNumber(_bitLength, _test_selection);
 
-    std::pair<unsigned int, unsigned int> generate() {
-        unsigned int p = GeneratePrimeNumber(_bitLength, _test_selection);
-        unsigned int q = GeneratePrimeNumber(_bitLength, _test_selection);
-        this->_pubKey = 65537;      //экспонента для защиты от атаки Винера
+        if (!Fermat(p, q)) {
+            throw "Значения уязвимы для атаки Ферма";
+        }
+
         this->_value_n = p * q;
 
-        unsigned int phi = (p - 1) * (q - 1);
+        unsigned long long phi = (p - 1) * (q - 1);
+        std::cout << "Созданные ключи: " << p << ", " << q << ", phi = " << phi << "\n";
+
+        this->_pubKey = NOD(_bitLength, _test_selection, phi);      //экспонента для защиты от атаки Винера
+        std::cout << "Открытый ключ: (" << _pubKey << ", " << _value_n << ")\n";
 
         if (_pubKey < 1 || _pubKey > phi) {
-            throw std::runtime_error("Ошибка!\tВозможно, вы ввели слишком маленькую длину бита");
+            throw "Ошибка!\tВозможно, вы ввели слишком маленькую длину бита";
         }
-
-        this->_privKey = multiplicativeInverse(_pubKey, phi);
+        
+        this->_privKey = mod_inverse(_pubKey, phi);
+        //this->_privKey = multiplicativeInverse(_pubKey, phi);
+        if (!Wiener(_privKey, _value_n)) {
+            throw "Значения уязвимы для атаки Винера";
+        }
 
         if (p == 0 || q == 0) {
-            throw std::runtime_error("Ошибка!\tВозможно, вы ввели неверное значение");
+            throw "Ошибка!\tВозможно, вы ввели неверное значение";
         }
 
-        return std::make_pair(_pubKey, _privKey);
-        /*std::cout << "Созданные ключи: " << p << ", " << q << "\n";
-        std::cout << "Открытый ключ: (" << e << ", " << _value_n << ")\n";
-        std::cout << "Закрытый ключ: (" << d << ", " << _value_n << ")\n";*/
+        std::cout << "Закрытый ключ: (" << _privKey << ", " << _value_n << ")\n";
+
     }
 
     unsigned long long Encrypt(unsigned long long message) {
@@ -196,11 +353,27 @@ int main()
     char value;
     std::cin >> value;
 
-    //RSA kg(10, value); //при е = 17
-    RSA kg(16, value);   //при е = 65537
+    //RSA kg(10, value);
+    RSA kg(5, value);
     kg.generate();
-    auto res_enc = kg.Encrypt(123454321);
-    std::cout << kg.Decrypt(res_enc);
+    unsigned long long res_enc = kg.Encrypt(123454321);
+    std::cout << kg.Decrypt(res_enc) << '\n';
+
+    //Атака Ферма:
+    Atack fer;
+    auto res_fer = fer.AtackFermat(kg._value_n);
+    std::cout << "Найденное phi с помощью открытого ключа: " << res_fer << "\n";
+    std::cout << "Найденный закрытый ключ: " << mod_inverse(kg._pubKey, res_fer);
+
+    auto res_su_fr = fer.ChainShot(kg._pubKey, kg._value_n);
+    /*for (int i = 0; i < res_su_fr.size(); i++) {
+        std::cout << "\nЦепная дроби: a= " << res_su_fr[i];
+    }*/
+
+    auto res_wien = fer.SuitableFractions(res_su_fr);
+    for (int i = 0; i < res_wien.size(); i++) {
+        std::cout << "\nПодходящие дроби: p= " << res_wien[i].first << " q= " << res_wien[i].second;
+    }
 
     return 0;
 }

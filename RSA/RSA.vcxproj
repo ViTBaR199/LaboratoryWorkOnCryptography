@@ -127,11 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Atack.cpp" />
     <ClCompile Include="CalculatingValues.cpp" />
     <ClCompile Include="ProbabilisticSimplicityTest.cpp" />
     <ClCompile Include="RSA.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Atack.h" />
     <ClInclude Include="CalculatingValues.h" />
     <ClInclude Include="IProbabilisticSimplicityTest.h" />
   </ItemGroup>

@@ -24,12 +24,18 @@
     <ClCompile Include="ProbabilisticSimplicityTest.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Atack.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CalculatingValues.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="IProbabilisticSimplicityTest.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Atack.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

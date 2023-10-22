@@ -11,7 +11,7 @@ public:
 
 class AbstractPrimalityTest : public IProbabilisticSimplicityTest {
 protected:
-	virtual bool iteration(int value) = 0;
+	virtual bool iteration(long long value) = 0;
 public:
 	bool runTest(int value, double minProbability) override;
 };
@@ -19,17 +19,17 @@ public:
 // Класс для теста Ферма
 class FermatTest : public AbstractPrimalityTest {
 public:
-	bool iteration(int value) override;
+	bool iteration(long long value) override;
 };
 
 // Класс для теста Соловея-Штрассена
 class SolovayStrassenTest : public AbstractPrimalityTest {
 public:
-	bool iteration(int value) override;
+	bool iteration(long long value) override;
 };
 
 // Класс для теста Миллера-Рабина
 class MillerRabinTest : public AbstractPrimalityTest {
 public:
-	bool iteration(int value) override;
+	bool iteration(long long value) override;
 };

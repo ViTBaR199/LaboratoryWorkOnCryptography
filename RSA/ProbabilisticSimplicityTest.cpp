@@ -24,16 +24,16 @@ bool AbstractPrimalityTest :: runTest(int value, double minProbability) {
 // Класс для теста Ферма
 // Если value - простое, то оно удовлетворяет сравнению a^(value-1) = 1 (mod value)
 // для любого a, не делящегося на value
-bool FermatTest :: iteration(int value) {
+bool FermatTest :: iteration(long long value) {
 	value = abs(value);
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(2, value - 2);
-	int a = dist(gen);
+	std::uniform_int_distribution<long long> dist(2, value - 2);
+	long long a = dist(gen);
 
-	int result = 1;					 //будущий результат
-	int base = a % value;			 //остаток от деления, будет вычисляться на каждом шагу
-	int exponent = value - 1;		 //степень
+	long long result = 1;					 //будущий результат
+	long long base = a % value;			 //остаток от деления, будет вычисляться на каждом шагу
+	long long exponent = value - 1;		 //степень
 
 	while (exponent > 0) {
 		if (exponent & 1) {			 //побитовое И, проверка на нечётность
@@ -50,23 +50,23 @@ bool FermatTest :: iteration(int value) {
 }
 
 // Класс для теста Соловея-Штрассена
-bool SolovayStrassenTest :: iteration(int value) {
+bool SolovayStrassenTest :: iteration(long long value) {
 	value = abs(value);
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(2, value - 2);
-	int a = dist(gen);
+	std::uniform_int_distribution<long long> dist(2, value - 2);
+	long long a = dist(gen);
 
 	// Вычисляем Якоби (a / value)
-	int jacobi = CalculatingValues::jacobi(a, value);
+	long long jacobi = CalculatingValues::jacobi(a, value);
 	if (jacobi == -1) {
 		jacobi = value - 1; // Приводим Якоби к положительному значению
 	}
 
 	// Вычисляем a ^ ((value - 1) / 2) mod value
-	int exponent = (value - 1) / 2;
-	int result = 1;
-	int base = a % value;
+	long long exponent = (value - 1) / 2;
+	long long result = 1;
+	long long base = a % value;
 	while (exponent > 0) {
 		if (exponent & 1) {
 			result = (result * base) % value;
@@ -85,22 +85,22 @@ bool SolovayStrassenTest :: iteration(int value) {
 }
 
 // Класс для теста Миллера-Рабина
-bool MillerRabinTest::iteration(int value) {
+bool MillerRabinTest::iteration(long long value) {
 	value = abs(value);
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dis(2, value - 2);
-	int a = dis(gen);
+	std::uniform_int_distribution<long long> dis(2, value - 2);
+	long long a = dis(gen);
 
-	int r = 0;
-	int d = value - 1;
+	long long r = 0;
+	long long d = value - 1;
 	while (d % 2 == 0) {
 		d /= 2;
 		r++;
 	}
 
-	int x = 1;
-	int base = a % value;
+	long long x = 1;
+	long long base = a % value;
 	while (d > 0) {
 		if (d & 1) {
 			x = (x * base) % value;
