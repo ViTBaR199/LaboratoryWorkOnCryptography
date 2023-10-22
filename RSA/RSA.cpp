@@ -366,14 +366,18 @@ int main()
     std::cout << "Найденный закрытый ключ: " << mod_inverse(kg._pubKey, res_fer);
 
     auto res_su_fr = fer.ChainShot(kg._pubKey, kg._value_n);
-    /*for (int i = 0; i < res_su_fr.size(); i++) {
+    for (int i = 0; i < res_su_fr.size(); i++) {
         std::cout << "\nЦепная дроби: a= " << res_su_fr[i];
-    }*/
+    }
 
     auto res_wien = fer.SuitableFractions(res_su_fr);
     for (int i = 0; i < res_wien.size(); i++) {
         std::cout << "\nПодходящие дроби: p= " << res_wien[i].first << " q= " << res_wien[i].second;
-    }
 
+        if (res_wien[i].second >= (0.3333 * pow((double)kg._value_n, 0.25))) {
+            std::cout << "\nd = " << res_wien[i - 1].second;
+            break;
+        }
+    }
     return 0;
 }
